@@ -1,2 +1,2 @@
 # text-to-sql
-A Text to SQL endpoint on the Databricks Environment
+A Text to SQL endpoint built on the Databricks Environment
