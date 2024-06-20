@@ -67,7 +67,7 @@ print(f"index {vs_index_fullname} on table {source_table_fullname} is ready")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Here, we will build out our first online store from the table_search_pre_index table we built in the last notebook. 
+# MAGIC Here, we will build out our online store from the table_search_pre_index table we built in the last notebook. 
 # MAGIC
 # MAGIC If the store already exists, and you wish to update it, uncomment the delete command.
 
@@ -103,16 +103,16 @@ w.online_tables.create(name=f"{catalog}.text_to_sql.table_search_os", spec=spec)
 from databricks.feature_engineering import FeatureEngineeringClient, FeatureLookup, FeatureFunction
 
 fe = FeatureEngineeringClient()
-fe.delete_feature_spec(name="robert_mosley.text_to_sql.formatted_table_definition_fs")
+#fe.delete_feature_spec(name=f"{catalog}.text_to_sql.formatted_table_definition_fs")
 fe.create_feature_spec(
-  name="robert_mosley.text_to_sql.formatted_table_definition_fs",
+  name=f"{catalog}.text_to_sql.formatted_table_definition_fs",
   features=[
     FeatureLookup(
-      table_name="robert_mosley.text_to_sql.table_search_pre_index",
+      table_name=f"{catalog}.text_to_sql.table_search_pre_index",
       lookup_key=["full_table"]
     ),
     FeatureFunction(
-      udf_name="robert_mosley.text_to_sql.format_table_definitions", 
+      udf_name=f"{catalog}.text_to_sql.format_table_definitions", 
       output_name="table_definition",
       input_bindings={
         "full_table": "full_table", 
@@ -134,7 +134,7 @@ workspace = WorkspaceClient()
 # Model Serving endpoint
 endpoint_name = "t2s_table_definition"
 
-workspace.serving_endpoints.delete(endpoint_name)
+#workspace.serving_endpoints.delete(endpoint_name)
 
 workspace.serving_endpoints.create(
   name=endpoint_name,
@@ -191,7 +191,7 @@ workspace = WorkspaceClient()
 # Model Serving endpoint
 endpoint_name = "t2s_build_prompt"
 
-workspace.serving_endpoints.delete(endpoint_name)
+#workspace.serving_endpoints.delete(endpoint_name)
 workspace.serving_endpoints.create(
   name=endpoint_name,
   config=EndpointCoreConfigInput(

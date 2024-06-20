@@ -278,13 +278,3 @@ else:
   print(f"endpoint {serving_endpoint_name} already exist...")
   if force_update:
     w.serving_endpoints.update_config_and_wait(served_entities=endpoint_config.served_entities, name=serving_endpoint_name)
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC SELECT ai_query(
-# MAGIC   't2s_dbrx_finetuned',
-# MAGIC   "Using the table definitions below, write valid SQLite to answer the question.\n\nCREATE TABLE ball_is_life ( id number, pick number, nfl_team text, player text, position text, college text )\n\nQuestion: What player was the 5th pick, and what team picked them?\n\nSQL: ") as small_training_set
-# MAGIC , ai_query(
-# MAGIC   't2s_dbrx_filter',
-# MAGIC   "Using the table definitions below, write valid SQLite to answer the question.\n\nCREATE TABLE ball_is_life ( id number, pick number, nfl_team text, player text, position text, college text )\n\nQuestion: What player was the 5th pick, and what team picked them?\n\nSQL: ") as large_training_set
