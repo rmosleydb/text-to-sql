@@ -18,3 +18,5 @@ One of the benefits of using this solution is that it gets a user comfortable wi
 - [Model Serving](https://www.databricks.com/product/model-serving)
 - [Foundation Model Training](https://docs.databricks.com/en/large-language-models/foundation-model-training/index.html) (Gated Public Preview)
 
+*Lastly, and I can't stress this enough, but this is only meant as a starting point for organizations as they begin this journey. Chances are, this will not suffice as a standalone text-to-sql endpoint for their company out of the box, but it should be a huge help as they get started.*
+
