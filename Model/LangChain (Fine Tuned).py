@@ -210,7 +210,7 @@ chain = setup_and_retrieval | build_prompt | prompt | llama_ft_model | output_pa
 
 # DBTITLE 1,Test the Chain
 import mlflow
-#mlflow.langchain.autolog(log_models=True, log_input_examples=True) #uncomment to enable tracing
+mlflow.langchain.autolog(log_models=True, log_input_examples=True) #uncomment to enable tracing
 
 question = {"prompt":"who ordered the most items?", "schema_filter":["mfg_sales_demo.northwind"]}
 answer = chain.invoke(question)

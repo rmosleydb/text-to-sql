@@ -1,11 +1,12 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC We must create our training data set. To do this, we will use our query history table built in the first notebook. But to build a full prompt, we will need table definitions and similar queries. 
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC We create a function for similarity search. Instead of recomputing the embeddings for each row each time, we use the precomupted embeddings from the table to identify the similarity between queries.
+# MAGIC ## Custom Model Fine Tuning
+# MAGIC
+# MAGIC This is an optional task, but one that will fine tune a smaller model on your query history to teach it how to better handle our text-to-sql use case. The net solution will use fewer tokens and hopefully require a smaller model than what you would use otherwise. 
+# MAGIC
+# MAGIC <img src="https://github.com/rmosleydb/text-to-sql/blob/main/_resources/T2S_pipeline_3.png?raw=true" width="800">
+# MAGIC
+# MAGIC To build our model, we must first create our training data set. To do this, we will use our query history table built in the first notebook, but to build a full prompt, we will need table definitions and similar queries. 
 
 # COMMAND ----------
 
@@ -15,6 +16,11 @@
 # COMMAND ----------
 
 catalog = 'robert_mosley'
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC We create a function for similarity search. Instead of recomputing the embeddings for each row each time, we use the precomupted embeddings from the table to identify the similarity between queries.
 
 # COMMAND ----------
 

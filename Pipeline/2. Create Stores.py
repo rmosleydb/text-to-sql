@@ -1,10 +1,13 @@
 # Databricks notebook source
 # MAGIC %md
+# MAGIC ## Mosaic AI Vector Store and Online Table Deployment
 # MAGIC Here we build all the online serving layers that we will need for our text-to-sql solution. 
 # MAGIC
 # MAGIC This includes:
 # MAGIC - Online Tables (and Functions): https://docs.databricks.com/en/machine-learning/feature-store/online-tables.html
 # MAGIC - Vector Search: https://docs.databricks.com/en/generative-ai/vector-search.html
+# MAGIC
+# MAGIC <img src="https://github.com/rmosleydb/text-to-sql/blob/main/_resources/T2S_pipeline_2.png?raw=true" width="800">
 
 # COMMAND ----------
 

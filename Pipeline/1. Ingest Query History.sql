@@ -10,7 +10,7 @@
 -- MAGIC 1. Extracting Table Structures: It retrieves the metadata of tables stored in Unity Catalog, including table names, column names, data types, and other relevant information. This information is crucial for understanding the structure of the data and forming accurate SQL queries.
 -- MAGIC 2. Capturing Query History: It captures the historical queries executed on the tables in Unity Catalog. Then it uses AI Functions to extract table names used in each query. Then AI Functions are used to generate synthetic questions and summaries. This will be useful for both the RAG chain and Fine Tuning an LLM later on.
 -- MAGIC
--- MAGIC <img src="file/resources/T2S_pipeline.png" width=800 /> ![](file/resources/T2S_pipeline.png)
+-- MAGIC <img src="https://github.com/rmosleydb/text-to-sql/blob/main/_resources/T2S_pipeline_1.png?raw=true" width="800">
 -- MAGIC
 -- MAGIC ## Conclusion
 -- MAGIC By leveraging the power of Unity Catalog and Language and Learning Models (LLMs), this notebook provides a solution for ingesting table structures and query history into a format suitable for text-to-SQL applications. Customers can benefit from improved data exploration, enhanced query generation, and optimized query performance. Follow the usage steps to integrate this notebook into your data analysis workflow and unlock the potential of LLMs for seamless data interaction.
@@ -70,6 +70,7 @@ with cte as (
     , REGEXP_REPLACE(REGEXP_REPLACE(statement_text, '\'([^\']+)\'', '\'{value}\''), '"([^"]+)"', '"{value}"') as statement_text
     , end_time
   from system.query.history
+  --from text_to_sql.query_history_api
   where execution_status = 'FINISHED'
     and statement_type = 'SELECT'
 )
@@ -94,6 +95,7 @@ with cte as (
     , lead(h.statement_text) over (partition by warehouse_id, executed_by order by end_time asc) next_statement_text
     , lead(h.statement_id) over (partition by warehouse_id, executed_by order by end_time asc) next_statement_id
   from system.query.history h
+  --from text_to_sql.query_history_api h
     inner join text_to_sql.query_history_unique l on h.statement_id = l.statement_id
 )
 , similarity as (
@@ -101,7 +103,7 @@ with cte as (
     , ai_similarity(coalesce(next_statement_text, ''), statement_text) as next_similarity_score
   from cte
   order by end_time desc
-  limit 10000
+  limit 10
 )
 select * from similarity
 where next_similarity_score < .93 
