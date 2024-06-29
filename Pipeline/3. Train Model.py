@@ -10,11 +10,20 @@
 
 # COMMAND ----------
 
+# DBTITLE 1,Update SDK
+#it's possible you'll need to upgrade the sdk for the final command. This is likely an optional step.
+%pip install databricks-sdk --upgrade
+dbutils.library.restartPython()
+
+# COMMAND ----------
+
+# DBTITLE 1,Set Current Catalog
 # MAGIC %sql
 # MAGIC use catalog robert_mosley;
 
 # COMMAND ----------
 
+# DBTITLE 1,Define Variables
 catalog = 'robert_mosley'
 
 # COMMAND ----------
@@ -42,14 +51,6 @@ catalog = 'robert_mosley'
 # MAGIC   
 # MAGIC     return 1-cosine_sim
 # MAGIC   $$
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC select array_size(ai_query("databricks-bge-large-en",generated_question, "ARRAY<FLOAT>")) size
-# MAGIC   ,*
-# MAGIC from text_to_sql.query_history_pre_index
-# MAGIC where array_size(question_embeddings) <> 1024
 
 # COMMAND ----------
 
@@ -117,6 +118,7 @@ catalog = 'robert_mosley'
 
 # COMMAND ----------
 
+# DBTITLE 1,Create Training Data Set
 # MAGIC %sql
 # MAGIC create or replace table text_to_sql.fine_tuning_set as
 # MAGIC with training_set as (
@@ -169,6 +171,7 @@ catalog = 'robert_mosley'
 
 # COMMAND ----------
 
+# DBTITLE 1,Load the Library
 from databricks.model_training import foundation_model as fm
 
 # COMMAND ----------
@@ -178,17 +181,20 @@ from databricks.model_training import foundation_model as fm
 
 # COMMAND ----------
 
+# DBTITLE 1,Create the Volume if it doesn't Exist
 # MAGIC %sql
 # MAGIC create volume if not exists text_to_sql.training_files;
 
 # COMMAND ----------
 
+# DBTITLE 1,Create the jsonl file
 file_path = f"/Volumes/{catalog}/text_to_sql/training_files/t2s-query-history.jsonl"
 df = spark.sql(f"SELECT full_prompt as prompt, response as response from {catalog}.text_to_sql.fine_tuning_set")
 df.toPandas().to_json(file_path, orient='records', lines=True)
 
 # COMMAND ----------
 
+# DBTITLE 1,View the first 5 lines of the file
 # Reading the file and printing its contents
 with open(file_path, 'r') as file:
     for i, line in enumerate(file):
@@ -225,26 +231,14 @@ run
 
 # COMMAND ----------
 
+# DBTITLE 1,View the current Training Run
 # Events for current run
 fm.get_events(run)
 
 # COMMAND ----------
 
+# DBTITLE 1,View a list of your last several training runs
 fm.list(limit=3)
-
-# COMMAND ----------
-
-register_to = "robert_mosley.text_to_sql.llama3_8b_t2s"
-
-# COMMAND ----------
-
-# MAGIC %pip install databricks-sdk --upgrade
-# MAGIC dbutils.library.restartPython()
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC drop table robert_mosley.text_to_sql.t2s_llama3_8b_ft_payload
 
 # COMMAND ----------
 
@@ -253,6 +247,7 @@ register_to = "robert_mosley.text_to_sql.llama3_8b_t2s"
 
 # COMMAND ----------
 
+# DBTITLE 1,Deploy the Model to Model Serving
 
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.service.serving import ServedEntityInput, EndpointCoreConfigInput, AutoCaptureConfigInput
